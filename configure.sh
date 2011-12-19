@@ -74,7 +74,14 @@ if [ -z "${OPENMPI_DIR}" -o "${OPENMPI_DIR}" = 'BUILD' ]; then
     NAME=openmpi-1.5.3
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
-    INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
+    if [ -z "${OPENMPI_INSTALL_DIR}"]; then
+        INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
+    else
+        echo "BEGIN MESSAGE"
+        echo "Installing OpenMPI into ${OPENMPI_INSTALL_DIR} "
+        echo "END MESSAGE"
+        INSTALL_DIR=${OPENMPI_INSTALL_DIR}
+    fi
     DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
     OPENMPI_DIR=${INSTALL_DIR}
 
