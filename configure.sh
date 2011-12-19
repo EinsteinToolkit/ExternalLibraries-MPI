@@ -84,6 +84,8 @@ if [ -z "${OPENMPI_DIR}" -o "${OPENMPI_DIR}" = 'BUILD' ]; then
     fi
     DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
     OPENMPI_DIR=${INSTALL_DIR}
+    OPENMPI_INC_DIRS=${OPENMPI_DIR}/include
+    OPENMPI_LIB_DIRS=${OPENMPI_DIR}/lib
 
 (
     exec >&2                    # Redirect stdout to stderr
