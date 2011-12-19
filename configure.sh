@@ -71,7 +71,7 @@ if [ -z "${OPENMPI_DIR}" -o "${OPENMPI_DIR}" = 'BUILD' ]; then
     
     # Set locations
     THORN=OpenMPI
-    NAME=openmpi-1.5.3
+    NAME=openmpi-1.5.4
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
     if [ -z "${OPENMPI_INSTALL_DIR}"]; then
