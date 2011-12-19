@@ -5,7 +5,9 @@
 ################################################################################
 
 # Set up shell
-set -x                          # Output commands
+if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
+    set -x                      # Output commands
+fi
 set -e                          # Abort on errors
 
 
@@ -16,7 +18,7 @@ set -e                          # Abort on errors
 
 if [ -n "${MPI}" ]; then
     echo 'BEGIN ERROR'
-    echo "Setting the option \"MPI\" is incompatible with the OpenMPI thorn. Please remove the option MPI = ${MPI}."
+    echo "Setting the option \"MPI\" is incompatible with the OpenMPI thorn. Please remove the option MPI=${MPI}."
     echo 'END ERROR'
     exit 1
 fi
@@ -64,9 +66,11 @@ fi
 # Build
 ################################################################################
 
-if [ -z "${OPENMPI_DIR}" -o "${OPENMPI_DIR}" = 'BUILD' ]; then
+if [ -z "${OPENMPI_DIR}"                                                  \
+     -o "$(echo "${OPENMPI_DIR}" | tr '[a-z]' '[A-Z]')" = 'BUILD' ]
+then
     echo "BEGIN MESSAGE"
-    echo "Building OpenMPI..."
+    echo "Using bundled OpenMPI..."
     echo "END MESSAGE"
     
     # Set locations
@@ -84,20 +88,26 @@ if [ -z "${OPENMPI_DIR}" -o "${OPENMPI_DIR}" = 'BUILD' ]; then
     fi
     DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
     OPENMPI_DIR=${INSTALL_DIR}
-    OPENMPI_INC_DIRS=${OPENMPI_DIR}/include
-    OPENMPI_LIB_DIRS=${OPENMPI_DIR}/lib
-
-(
-    exec >&2                    # Redirect stdout to stderr
-    set -x                      # Output commands
-    set -e                      # Abort on errors
-    cd ${SCRATCH_BUILD}
+    
     if [ -e ${DONE_FILE} -a ${DONE_FILE} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
                          -a ${DONE_FILE} -nt ${SRCDIR}/configure.sh ]
     then
-        echo "OpenMPI: The enclosed OpenMPI library has already been built; doing nothing"
+        echo "BEGIN MESSAGE"
+        echo "OpenMPI has already been built; doing nothing"
+        echo "END MESSAGE"
     else
-        echo "OpenMPI: Building enclosed OpenMPI library"
+        echo "BEGIN MESSAGE"
+        echo "Building OpenMPI"
+        echo "END MESSAGE"
+        
+        # Build in a subshell
+        (
+        exec >&2                # Redirect stdout to stderr
+        if [ "$(echo ${VERBOSE} | tr '[:upper:]' '[:lower:]')" = 'yes' ]; then
+            set -x              # Output commands
+        fi
+        set -e                  # Abort on errors
+        cd ${SCRATCH_BUILD}
         
         # Set up environment
         if [ "${F90}" = "none" ]; then
@@ -142,16 +152,17 @@ if [ -z "${OPENMPI_DIR}" -o "${OPENMPI_DIR}" = 'BUILD' ]; then
         
         date > ${DONE_FILE}
         echo "OpenMPI: Done."
+        
+        )
+        
+        if (( $? )); then
+            echo 'BEGIN ERROR'
+            echo 'Error while building OpenMPI. Aborting.'
+            echo 'END ERROR'
+            exit 1
+        fi
     fi
-)
-
-    if (( $? )); then
-        echo 'BEGIN ERROR'
-        echo 'Error while building OpenMPI. Aborting.'
-        echo 'END ERROR'
-        exit 1
-    fi
-
+    
 fi
 
 
