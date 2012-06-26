@@ -18,7 +18,7 @@ set -e                          # Abort on errors
 
 if [ -n "${MPI}" ]; then
     echo 'BEGIN ERROR'
-    echo "Setting the option \"MPI\" is incompatible with the OpenMPI thorn. Please remove the option MPI=${MPI}."
+    echo "Setting the option \"MPI\" is incompatible with the MPI thorn. Please remove the option MPI=${MPI}."
     echo 'END ERROR'
     exit 1
 fi
@@ -29,33 +29,33 @@ fi
 # Search
 ################################################################################
 
-if [ -z "${OPENMPI_DIR}" ]; then
+if [ -z "${MPI_DIR}" ]; then
     echo "BEGIN MESSAGE"
-    echo "OpenMPI selected, but OPENMPI_DIR not set. Checking some places..."
+    echo "MPI selected, but MPI_DIR not set. Checking some places..."
     echo "END MESSAGE"
     
     FILES="include/mpi.h lib/libmpi.a"
     DIRS="/usr /usr/local /usr/local/mpi /usr/local/packages/mpi /usr/local/apps/mpi /opt/local /usr/lib/openmpi ${HOME} ${HOME}/mpi c:/packages/mpi"
     for dir in $DIRS; do
-        OPENMPI_DIR="$dir"
+        MPI_DIR="$dir"
         for file in $FILES; do
             if [ ! -r "$dir/$file" ]; then
-                unset OPENMPI_DIR
+                unset MPI_DIR
                 break
             fi
         done
-        if [ -n "$OPENMPI_DIR" ]; then
+        if [ -n "$MPI_DIR" ]; then
             break
         fi
     done
     
-    if [ -z "$OPENMPI_DIR" ]; then
+    if [ -z "$MPI_DIR" ]; then
         echo "BEGIN MESSAGE"
-        echo "OpenMPI not found"
+        echo "MPI not found"
         echo "END MESSAGE"
     else
         echo "BEGIN MESSAGE"
-        echo "Found OpenMPI in ${OPENMPI_DIR}"
+        echo "Found MPI in ${MPI_DIR}"
         echo "END MESSAGE"
     fi
 fi
@@ -66,39 +66,38 @@ fi
 # Build
 ################################################################################
 
-if [ -z "${OPENMPI_DIR}"                                                  \
-     -o "$(echo "${OPENMPI_DIR}" | tr '[a-z]' '[A-Z]')" = 'BUILD' ]
+if [ -z "${MPI_DIR}"                                                  \
+     -o "$(echo "${MPI_DIR}" | tr '[a-z]' '[A-Z]')" = 'BUILD' ]
 then
     echo "BEGIN MESSAGE"
-    echo "Using bundled OpenMPI..."
+    echo "Using bundled MPI..."
     echo "END MESSAGE"
     
     # Set locations
-    THORN=OpenMPI
-    #NAME=openmpi-1.5.4
+    THORN=MPI
     NAME=openmpi-1.6
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
-    if [ -z "${OPENMPI_INSTALL_DIR}"]; then
+    if [ -z "${MPI_INSTALL_DIR}"]; then
         INSTALL_DIR=${SCRATCH_BUILD}/external/${THORN}
     else
         echo "BEGIN MESSAGE"
-        echo "Installing OpenMPI into ${OPENMPI_INSTALL_DIR} "
+        echo "Installing MPI into ${MPI_INSTALL_DIR} "
         echo "END MESSAGE"
-        INSTALL_DIR=${OPENMPI_INSTALL_DIR}
+        INSTALL_DIR=${MPI_INSTALL_DIR}
     fi
     DONE_FILE=${SCRATCH_BUILD}/done/${THORN}
-    OPENMPI_DIR=${INSTALL_DIR}
+    MPI_DIR=${INSTALL_DIR}
     
     if [ -e ${DONE_FILE} -a ${DONE_FILE} -nt ${SRCDIR}/dist/${NAME}.tar.gz \
                          -a ${DONE_FILE} -nt ${SRCDIR}/configure.sh ]
     then
         echo "BEGIN MESSAGE"
-        echo "OpenMPI has already been built; doing nothing"
+        echo "MPI has already been built; doing nothing"
         echo "END MESSAGE"
     else
         echo "BEGIN MESSAGE"
-        echo "Building OpenMPI"
+        echo "Building MPI"
         echo "END MESSAGE"
         
         # Build in a subshell
@@ -113,7 +112,7 @@ then
         # Set up environment
         if [ "${F90}" = "none" ]; then
             echo 'BEGIN MESSAGE'
-            echo 'No Fortran 90 compiler available. Building OpenMPI library without Fortran support.'
+            echo 'No Fortran 90 compiler available. Building MPI library without Fortran support.'
             echo 'END MESSAGE'
             unset FC
             unset FCFLAGS
@@ -128,37 +127,37 @@ then
             export OBJECT_MODE=64
         fi
         
-        echo "OpenMPI: Preparing directory structure..."
+        echo "MPI: Preparing directory structure..."
         mkdir build external done 2> /dev/null || true
         rm -rf ${BUILD_DIR} ${INSTALL_DIR}
         mkdir ${BUILD_DIR} ${INSTALL_DIR}
         
-        echo "OpenMPI: Unpacking archive..."
+        echo "MPI: Unpacking archive..."
         pushd ${BUILD_DIR}
         ${TAR} xzf ${SRCDIR}/dist/${NAME}.tar.gz
         
-        echo "OpenMPI: Configuring..."
+        echo "MPI: Configuring..."
         cd ${NAME}
-        ./configure --prefix=${OPENMPI_DIR}
+        ./configure --prefix=${MPI_DIR}
         
-        echo "OpenMPI: Building..."
+        echo "MPI: Building..."
         ${MAKE}
         
-        echo "OpenMPI: Installing..."
+        echo "MPI: Installing..."
         ${MAKE} install
         popd
         
-        echo "OpenMPI: Cleaning up..."
+        echo "MPI: Cleaning up..."
         rm -rf ${BUILD_DIR}
         
         date > ${DONE_FILE}
-        echo "OpenMPI: Done."
+        echo "MPI: Done."
         
         )
         
         if (( $? )); then
             echo 'BEGIN ERROR'
-            echo 'Error while building OpenMPI. Aborting.'
+            echo 'Error while building MPI. Aborting.'
             echo 'END ERROR'
             exit 1
         fi
@@ -174,28 +173,26 @@ fi
 
 # Set options
 
-if [ "${OPENMPI_DIR}" != '/usr' -a "${OPENMPI_DIR}" != '/usr/local' ]; then
-    : ${OPENMPI_INC_DIRS="${OPENMPI_DIR}/include"}
-    : ${OPENMPI_LIB_DIRS="${OPENMPI_DIR}/lib"}
+if [ "${MPI_DIR}" != '/usr' -a "${MPI_DIR}" != '/usr/local' ]; then
+    : ${MPI_INC_DIRS="${MPI_DIR}/include"}
+    : ${MPI_LIB_DIRS="${MPI_DIR}/lib"}
 fi
-: ${OPENMPI_LIBS='mpi mpi_cxx'}
+: ${MPI_LIBS='mpi mpi_cxx'}
 
 # Pass options to Cactus
 
 echo "BEGIN DEFINE"
-echo "CCTK_MPI     1"
-echo "HAVE_MPI     1"
-echo "HAVE_OPENMPI 1"
+echo "CCTK_MPI 1"
+echo "HAVE_MPI 1"
 echo "END DEFINE"
 
 echo "BEGIN MAKE_DEFINITION"
 echo "CCTK_MPI     = 1"
 echo "HAVE_MPI     = 1"
-echo "HAVE_OPENMPI = 1"
-echo "MPI_DIR      = ${OPENMPI_DIR}"
-echo "MPI_INC_DIRS = ${OPENMPI_INC_DIRS}"
-echo "MPI_LIB_DIRS = ${OPENMPI_LIB_DIRS}"
-echo "MPI_LIBS     = ${OPENMPI_LIBS}"
+echo "MPI_DIR      = ${MPI_DIR}"
+echo "MPI_INC_DIRS = ${MPI_INC_DIRS}"
+echo "MPI_LIB_DIRS = ${MPI_LIB_DIRS}"
+echo "MPI_LIBS     = ${MPI_LIBS}"
 echo "END MAKE_DEFINITION"
 
 echo 'INCLUDE_DIRECTORY $(MPI_INC_DIRS)'

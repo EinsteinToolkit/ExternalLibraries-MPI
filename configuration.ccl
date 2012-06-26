@@ -1,8 +1,8 @@
-# Configuration definitions for thorn OpenMPI
+# Configuration definitions for thorn MPI
 
 PROVIDES MPI
 {
   SCRIPT configure.sh
   LANG bash
-  OPTIONS MPI OPENMPI_DIR OPENMPI_INC_DIRS OPENMPI_LIB_DIRS OPENMPI_LIBS OPENMPI_INSTALL_DIR
+  OPTIONS MPI MPI_DIR MPI_INC_DIRS MPI_LIB_DIRS MPI_LIBS MPI_INSTALL_DIR
 }

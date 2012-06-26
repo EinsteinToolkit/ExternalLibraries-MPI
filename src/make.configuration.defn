@@ -1,4 +1,4 @@
-# make.configuration.defn file for thorn OpenMPI
+# make.configuration.defn file for thorn MPI
 
 # Define the relevant OpenMPI utilities
 #ALL_UTILS += mpirun ompi-clean ompi-iof ompi-ps ompi-server ompi_info orte-clean orte-iof orte-ps orted orterun
