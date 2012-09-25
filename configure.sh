@@ -75,8 +75,7 @@ then
     
     # Set locations
     THORN=MPI
-    NAME=openmpi-1.6
-    #NAME=openmpi-1.6.1
+    NAME=openmpi-1.6.2
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
     if [ -z "${MPI_INSTALL_DIR}"]; then
@@ -136,6 +135,7 @@ then
         echo "MPI: Unpacking archive..."
         pushd ${BUILD_DIR}
         ${TAR?} xzf ${SRCDIR}/dist/${NAME}.tar.gz
+        ${PATCH?} -p0 < ${SRCDIR}/dist/default_outfile.diff
         
         echo "MPI: Configuring..."
         cd ${NAME}
