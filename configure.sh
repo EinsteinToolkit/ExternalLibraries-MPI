@@ -75,7 +75,7 @@ then
     
     # Set locations
     THORN=MPI
-    NAME=openmpi-1.6.2
+    NAME=openmpi-1.6.3
     SRCDIR=$(dirname $0)
     BUILD_DIR=${SCRATCH_BUILD}/build/${THORN}
     if [ -z "${MPI_INSTALL_DIR}"]; then
