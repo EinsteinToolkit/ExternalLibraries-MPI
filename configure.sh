@@ -110,6 +110,12 @@ then
         cd ${SCRATCH_BUILD}
         
         # Set up environment
+        # Disable ccache: remove "ccache" and all options that follow
+        # Note: we can use only basic sed regexps here
+        export CC=$(echo '' ${CC} '' |
+            sed -e 's/ ccache  *\(-[^ ]*  *\)*/ /g;s/^ //;s/ $//')
+        export CXX=$(echo '' ${CXX} '' |
+            sed -e 's/ ccache  *\(-[^ ]*  *\)*/ /g;s/^ //;s/ $//')
         if [ "${F90}" = "none" ]; then
             echo 'BEGIN MESSAGE'
             echo 'No Fortran 90 compiler available. Building MPI library without Fortran support.'
