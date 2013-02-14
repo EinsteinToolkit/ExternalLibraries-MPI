@@ -49,6 +49,14 @@ if [ -z "${MPI_DIR}" ]; then
         fi
     done
     
+    if [[ -z "$MPI_DIR" && -z "$MPI_INC_DIRS" ]]; then
+        # MacPorts OpenMPI
+        if [ -r /opt/local/include/openmpi/mpi.h ]; then
+            MPI_DIR=/opt/local
+            MPI_INC_DIRS=/opt/local/include/openmpi
+        fi
+    fi
+
     if [ -z "$MPI_DIR" ]; then
         echo "BEGIN MESSAGE"
         echo "MPI not found"
