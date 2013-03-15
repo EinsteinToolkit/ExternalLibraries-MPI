@@ -153,7 +153,7 @@ then
         
         echo "MPI: Configuring..."
         cd ${NAME}
-        ./configure --prefix=${MPI_DIR}
+        ./configure --prefix=${MPI_DIR} --enable-shared=no --enable-static=yes
         
         echo "MPI: Building..."
         ${MAKE}
