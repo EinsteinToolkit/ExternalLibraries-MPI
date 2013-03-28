@@ -29,7 +29,9 @@ fi
 # Search
 ################################################################################
 
-if [ -z "${MPI_DIR}" ]; then
+if [ -z "${MPI_DIR}" \
+     -o "$(echo "${MPI_DIR}" | tr '[a-z]' '[A-Z]')" = 'NO_BUILD' ] 
+then
     echo "BEGIN MESSAGE"
     echo "MPI selected, but MPI_DIR not set. Checking some places..."
     echo "END MESSAGE"
