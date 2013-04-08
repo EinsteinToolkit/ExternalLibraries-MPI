@@ -196,9 +196,9 @@ fi
 if [ -x ${MPI_DIR}/bin/mpic++ ]; then
   ${MPI_DIR}/bin/mpic++ --showme:libs > /dev/null 2>&1
   if [ $? == 0 ]; then
-    : ${MPI_LIBS="$(echo '' $(${MPI_DIR}/bin/mpic++ --showme:libs) '')"}
-    : ${MPI_LIB_DIRS="$(echo '' $(${MPI_DIR}/bin/mpic++ --showme:libdirs) '' | sed -e 's+\( \|^\)/lib\( \|$\)++g;s+\( \|^\)/lib64\( \|$\)++g;s+\( \|^\)/usr/lib\( \|$\)++g;s+\( \|^\)/usr/lib64\( \|$\)++g;s+\( \|^\)/usr/local/lib\( \|$\)++g;s+\( \|^\)/usr/local/lib64\( \|$\)++g')"}
     : ${MPI_INC_DIRS="$(echo '' $(${MPI_DIR}/bin/mpic++ --showme:incdirs) '' | sed -e 's+\( \|^\)/include\( \|$\)++g;s+\( \|^\)/use/include\( \|$\)++g;s+\( \|^\)/usr/local/include\( \|$\)++g')"}
+    : ${MPI_LIB_DIRS="$(echo '' $(${MPI_DIR}/bin/mpic++ --showme:libdirs) '' | sed -e 's+\( \|^\)/lib\( \|$\)++g;s+\( \|^\)/lib64\( \|$\)++g;s+\( \|^\)/usr/lib\( \|$\)++g;s+\( \|^\)/usr/lib64\( \|$\)++g;s+\( \|^\)/usr/local/lib\( \|$\)++g;s+\( \|^\)/usr/local/lib64\( \|$\)++g')"}
+    : ${MPI_LIBS="$(echo '' $(${MPI_DIR}/bin/mpic++ --showme:libs) '')"}
   fi
 fi
 
