@@ -1,6 +1,6 @@
-# make.configuration.deps file for thorn OpenMPI
+# make.configuration.deps file for thorn MPI
 
-$(UTIL_DIR)/%: $(OPENMPI_DIR)/bin/%
+$(UTIL_DIR)/%: $(MPI_DIR)/bin/%
 	@echo "Copying $* from $< to $(UTIL_DIR)"
 	-$(MKDIR) $(MKDIRFLAGS) $(UTIL_DIR) 2> /dev/null
 	cp $< $@
