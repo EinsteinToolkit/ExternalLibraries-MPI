@@ -51,8 +51,9 @@ if [ -z "${MPI_DIR}" ]; then
     
     if [ -z "${MPI_DIR}" -a -z "${MPI_INC_DIRS}" ]; then
         # MacPorts OpenMPI
-        if [ -r /opt/local/include/openmpi/mpi.h -a \
-             -r /opt/local/lib/libmpi.a ];
+        if [ -r /opt/local/include/openmpi/mpi.h -a     \
+             -r /opt/local/lib/libmpi.dylib -a          \
+             -r /opt/local/lib/libmpi_cxx.dylib ];      \
         then
             MPI_DIR=/opt/local
             MPI_INC_DIRS=/opt/local/include/openmpi
