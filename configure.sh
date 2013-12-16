@@ -155,9 +155,10 @@ then
         pushd ${BUILD_DIR}
         ${TAR?} xzf ${SRCDIR}/dist/${NAME}.tar.gz
        ${PATCH?} -p0 < ${SRCDIR}/dist/default_outfile-1.6.5.patch
+        cd ${NAME}
+        ${PATCH?} -p0 < ${SRCDIR}/dist/cuda_build_fix__svn29754
         
         echo "MPI: Configuring..."
-        cd ${NAME}
         # Cannot have a memory manager with a static library on some
         # systems (e.g. Linux); see
         # <http://www.open-mpi.org/faq/?category=mpi-apps#static-mpi-apps>
