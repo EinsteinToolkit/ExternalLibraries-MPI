@@ -154,7 +154,7 @@ then
         echo "MPI: Unpacking archive..."
         pushd ${BUILD_DIR}
         ${TAR?} xzf ${SRCDIR}/dist/${NAME}.tar.gz
-       ${PATCH?} -p0 < ${SRCDIR}/dist/default_outfile-1.6.5.patch
+        ${PATCH?} -p0 < ${SRCDIR}/dist/default_outfile-1.6.5.patch
         cd ${NAME}
         ${PATCH?} -p0 < ${SRCDIR}/dist/cuda_build_fix__svn29754
         
