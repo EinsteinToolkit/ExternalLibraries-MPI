@@ -85,6 +85,23 @@ then
     echo "Using bundled MPI..."
     echo "END MESSAGE"
     
+    # check for required tools. Do this here so that we don't require them when
+    # using the system library
+    if [ x$TAR = x ] ; then
+      echo 'BEGIN ERROR'
+      echo 'Could not find tar command. Please make sure that (gnu) tar is present'
+      echo 'and that the TAR variable is set to its location.'
+      echo 'END ERROR'
+      exit 1
+    fi
+    if [ x$PATCH = x ] ; then
+      echo 'BEGIN ERROR'
+      echo 'Could not find patch command. Please make sure that (gnu) tar is present'
+      echo 'and that the PATCH variable is set to its location.'
+      echo 'END ERROR'
+      exit 1
+    fi
+
     # Set locations
     THORN=MPI
     NAME=openmpi-1.6.5
