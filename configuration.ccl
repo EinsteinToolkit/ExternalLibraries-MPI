@@ -2,7 +2,7 @@
 
 PROVIDES MPI
 {
-  SCRIPT configure.sh
-  LANG bash
+  SCRIPT configure.pl
+  LANG perl
   OPTIONS MPI MPI_DIR MPI_INC_DIRS MPI_LIB_DIRS MPI_LIBS MPI_INSTALL_DIR
 }
