@@ -43,6 +43,7 @@ my $mpi_dir = undef;
 my $mpi_cmd = undef;
 my $mpi_search = 1;
 my $mpi_build = 0;
+my $mpi_manual = 0;
 
 if("$ENV{MPI_DIR}" =~ /^\s*$/) {
   message("MPI selected, but MPI_DIR is not set. Computing settings...");
@@ -52,6 +53,7 @@ if("$ENV{MPI_DIR}" =~ /^\s*$/) {
   $mpi_dir = $ENV{MPI_DIR};
   $mpi_search = 0;
   $mpi_build = 0;
+  $mpi_manual = 1;
 } elsif($ENV{MPI_DIR} eq "BUILD") {
   $mpi_build = 1;
   $mpi_search = 0;
@@ -220,6 +222,8 @@ if($mpi_info_set) {
   $ENV{MPI_LIBS}=join(" ",@libs);
 
   message("Successfully configured MPI.");
+} elsif($mpi_manual) {
+  message("MPI was manually configured.");
 } else {
   message("MPI could not be configured.");
   exit 5;
