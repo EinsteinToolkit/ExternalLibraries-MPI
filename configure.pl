@@ -49,16 +49,13 @@ if("$ENV{MPI_DIR}" =~ /^\s*$/) {
   message("MPI selected, but MPI_DIR is not set. Computing settings...");
   $mpi_build = 1;
   $mpi_search = 1;
-} elsif(-d $ENV{MPI_DIR}) {
+} elsif(-d $ENV{MPI_DIR} or $ENV{MPI_DIR} eq "NO_BUILD") {
   $mpi_dir = $ENV{MPI_DIR};
   $mpi_search = 0;
   $mpi_build = 0;
   $mpi_manual = 1;
 } elsif($ENV{MPI_DIR} eq "BUILD") {
   $mpi_build = 1;
-  $mpi_search = 0;
-} elsif($ENV{MPI_DIR} eq "NO_BUILD") {
-  $mpi_build = 0;
   $mpi_search = 0;
 } else {
   $mpi_build = 1;
