@@ -66,12 +66,15 @@ if("$ENV{MPI_DIR}" =~ /^\s*$/) {
 # Search
 ################################################################################
 if($mpi_search and !defined($mpi_cmd)) {
-  $mpi_cmd = which("mpicc");
+  $mpi_cmd = which("mpic++");
+  $mpi_cmd = which("mpiCC") unless(defined($mpi_cmd));
+  $mpi_cmd = which("mpicxx") unless(defined($mpi_cmd));
+  $mpi_cmd = which("mpicc") unless(defined($mpi_cmd));
   if(defined($mpi_cmd)) {
     $mpi_dir = $mpi_cmd;
-    $mpi_dir =~ s{/mpicc$}{};
+    $mpi_dir =~ s{/mpi(c\+\+|CC|cc|cxx)$}{};
     $mpi_dir =~ s{/bin$}{};
-    message("Found mpicc at $mpi_cmd!");
+    message("Found mpi compiler wrapper at $mpi_cmd!");
     mpi_get_info();
   }
 }
