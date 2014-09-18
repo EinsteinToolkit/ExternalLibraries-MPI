@@ -212,7 +212,7 @@ if($mpi_info_set) {
   while($info =~ /\s-I\s*(\S+)/g) {
     push @incdirs, $1;
   }
-  while($info =~ /\s-l(\w+)/g) {
+  while($info =~ /\s-l(\S+)/g) {
     push @libs, $1;
   }
 
