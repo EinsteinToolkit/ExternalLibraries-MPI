@@ -45,18 +45,44 @@ my $mpi_search = 1;
 my $mpi_build = 0;
 my $mpi_manual = 0;
 
+my @mpicxx_names = ("mpic++","mpiCC","mpicxx","mpicxx-openmpi-mp","mpicc");
+
 if("$ENV{MPI_DIR}" =~ /^\s*$/) {
   message("MPI selected, but MPI_DIR is not set. Computing settings...");
   $mpi_build = 1;
   $mpi_search = 1;
-} elsif(-d $ENV{MPI_DIR} or $ENV{MPI_DIR} eq "NO_BUILD") {
+} elsif($ENV{MPI_DIR} eq "NO_BUILD") {
   $mpi_dir = $ENV{MPI_DIR};
-  $mpi_search = 0;
   $mpi_build = 0;
-  $mpi_manual = 1;
+  $mpi_search = 1;
 } elsif($ENV{MPI_DIR} eq "BUILD") {
   $mpi_build = 1;
   $mpi_search = 0;
+} elsif(-d $ENV{MPI_DIR}) {
+  $mpi_dir = $ENV{MPI_DIR};
+  $mpi_build = 0;
+  $mpi_search = 0;
+  if(is_set("MPI_INC_DIRS") or is_set("MPI_LIB_DIRS") or is_set("MPI_LIBS")) {
+    # If some of the MPI variables are set, this is a completely manual configuration.
+    message("1: manual");
+    $mpi_manual = 1;
+  } else {
+    # If none of the MPI variables are set, check for the compiler wrapper under MPI_DIR
+    $mpi_manual = 0;
+    for my $name (@mpicxx_names) {
+      my $full_name = $ENV{MPI_DIR}."/bin/".$name;
+      if(-x $full_name) {
+        $mpi_cmd = $full_name;
+        last;
+      }
+    }
+    if(defined($mpi_cmd)) {
+      message("Found mpi compiler wrapper at $mpi_cmd!");
+      mpi_get_info();
+    } else {
+      message("No mpi compiler wrapper found beneath MPI_DIR (MPI_DIR=$ENV{MPI_DIR})");
+    }
+  }
 } else {
   $mpi_build = 1;
   $mpi_search = 1;
@@ -66,11 +92,10 @@ if("$ENV{MPI_DIR}" =~ /^\s*$/) {
 # Search
 ################################################################################
 if($mpi_search and !defined($mpi_cmd)) {
-  $mpi_cmd = which("mpic++");
-  $mpi_cmd = which("mpiCC") unless(defined($mpi_cmd));
-  $mpi_cmd = which("mpicxx") unless(defined($mpi_cmd));
-  $mpi_cmd = which("mpicxx-openmpi-mp") unless(defined($mpi_cmd));
-  $mpi_cmd = which("mpicc") unless(defined($mpi_cmd));
+  for my $name (@mpicxx_names) {
+    last if(defined($mpi_cmd));
+    $mpi_cmd = which($name);
+  }
   if(defined($mpi_cmd)) {
     $mpi_dir = $mpi_cmd;
     $mpi_dir =~ s{/mpi(c\+\+|CC|cc|cxx)[^/]*$}{};
@@ -344,4 +369,8 @@ sub end_message {
     print "END $msg\n";
     print "BEGIN $oldmsg\n" unless($oldmsg eq "");
   }
+}
+sub is_set {
+  my $var = shift;
+  return (defined($ENV{$var}) and !($ENV{$var} =~ /^\s*$/));
 }
