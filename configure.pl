@@ -63,11 +63,13 @@ if("$ENV{MPI_DIR}" =~ /^\s*$/) {
   $mpi_build = 0;
   $mpi_search = 0;
   if(is_set("MPI_INC_DIRS") or is_set("MPI_LIB_DIRS") or is_set("MPI_LIBS")) {
-    # If some of the MPI variables are set, this is a completely manual configuration.
+    # If some of the MPI variables are set, this is a completely
+    # manual configuration.
     message("1: manual");
     $mpi_manual = 1;
   } else {
-    # If none of the MPI variables are set, check for the compiler wrapper under MPI_DIR
+    # If none of the MPI variables are set, check for the compiler
+    # wrapper under MPI_DIR
     $mpi_manual = 0;
     for my $name (@mpicxx_names) {
       my $full_name = $ENV{MPI_DIR}."/bin/".$name;
@@ -110,8 +112,8 @@ if($mpi_search and !defined($mpi_cmd)) {
 ################################################################################
 
 if($mpi_build and !$mpi_info_set) {
-  # check for required tools. Do this here so that we don't require them when
-  # using the system library
+  # check for required tools. Do this here so that we don't require
+  # them when using the system library
   unless(defined($ENV{TAR}) and $ENV{TAR} =~ /\S/ and -x which($ENV{TAR})) {
     begin_message("ERROR");
     print "ENV{TAR}=$ENV{TAR}\n";
@@ -229,14 +231,14 @@ if($mpi_build and !$mpi_info_set) {
 ################################################################################
 
 if($mpi_info_set) {
-  my @libdirs = ();
   my @incdirs = ();
+  my @libdirs = ();
   my @libs = ();
-  while($info =~ /\s-L\s*(\S+)/g) {
-    push @libdirs, $1;
-  }
   while($info =~ /\s-I\s*(\S+)/g) {
     push @incdirs, $1;
+  }
+  while($info =~ /\s-L\s*(\S+)/g) {
+    push @libdirs, $1;
   }
   while($info =~ /\s-l(\S+)/g) {
     push @libs, $1;
@@ -249,6 +251,30 @@ if($mpi_info_set) {
 
   message("Successfully configured MPI.");
 } elsif($mpi_manual) {
+  my @incdirs = ();
+  my @libdirs = ();
+  my @libs = ();
+  if (is_set("MPI_INC_DIRS")) {
+    push @incdirs, $ENV{MPI_INC_DIRS};
+  } else {
+    push @incdirs, $ENV{MPI_DIR} . "/include";
+  }
+  if (is_set("MPI_LIB_DIRS")) {
+    push @libdirs, $ENV{MPI_LIB_DIRS};
+  } else {
+    push @libdirs, $ENV{MPI_DIR} . "/lib64";
+    push @libdirs, $ENV{MPI_DIR} . "/lib";
+  }
+  if (is_set("MPI_LIBS")) {
+    push @libs, $ENV{MPI_LIBS};
+  } else {
+    # do nothing
+  }
+
+  $ENV{MPI_INC_DIRS}=join(" ",@incdirs);
+  $ENV{MPI_LIB_DIRS}=join(" ",@libdirs);
+  $ENV{MPI_LIBS}=join(" ",@libs);
+
   message("MPI was manually configured.");
 } else {
   message("MPI could not be configured.");
