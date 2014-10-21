@@ -27,10 +27,7 @@ $verbose = 1 if($ENV{VERBOSE} =~ /^yes$/i);
 ################################################################################
 
 if(defined($ENV{MPI})) {
-    begin_message("ERROR");
-    print "Setting the option \"MPI\" is incompatible with the MPI thorn. Please remove the option MPI=$ENV{MPI}.\n";
-    end_message();
-    exit 2;
+    error("Setting the option \"MPI\" is incompatible with the MPI thorn. Please remove the option MPI=$ENV{MPI}.",2);
 }
 
 ################################################################################
@@ -47,7 +44,7 @@ my $mpi_manual = 0;
 
 my @mpicxx_names = ("mpic++","mpiCC","mpicxx","mpicxx-openmpi-mp","mpicc");
 
-if("$ENV{MPI_DIR}" =~ /^\s*$/) {
+if(!is_set("MPI_DIR")) {
   message("MPI selected, but MPI_DIR is not set. Computing settings...");
   $mpi_build = 1;
   $mpi_search = 1;
@@ -58,14 +55,22 @@ if("$ENV{MPI_DIR}" =~ /^\s*$/) {
 } elsif($ENV{MPI_DIR} eq "BUILD") {
   $mpi_build = 1;
   $mpi_search = 0;
-} elsif(-d $ENV{MPI_DIR}) {
+} elsif($ENV{MPI_DIR} eq "NONE") {
+  $mpi_build = 0;
+  $mpi_search = 0;
+  $mpi_info_set = 1;
+  $mpi_dir = '';
+  $info = '';
+} else {
+  if(!-d $ENV{MPI_DIR}) {
+    message("MPI_DIR is set to a directory that does not exist (MPI_DIR=$ENV{MPI_DIR}); continuing anyway");
+  }
   $mpi_dir = $ENV{MPI_DIR};
   $mpi_build = 0;
   $mpi_search = 0;
   if(is_set("MPI_INC_DIRS") or is_set("MPI_LIB_DIRS") or is_set("MPI_LIBS")) {
     # If some of the MPI variables are set, this is a completely
     # manual configuration.
-    message("1: manual");
     $mpi_manual = 1;
   } else {
     # If none of the MPI variables are set, check for the compiler
@@ -85,9 +90,6 @@ if("$ENV{MPI_DIR}" =~ /^\s*$/) {
       message("No mpi compiler wrapper found beneath MPI_DIR (MPI_DIR=$ENV{MPI_DIR})");
     }
   }
-} else {
-  $mpi_build = 1;
-  $mpi_search = 1;
 }
 
 ################################################################################
@@ -115,19 +117,15 @@ if($mpi_build and !$mpi_info_set) {
   # check for required tools. Do this here so that we don't require
   # them when using the system library
   unless(defined($ENV{TAR}) and $ENV{TAR} =~ /\S/ and -x which($ENV{TAR})) {
-    begin_message("ERROR");
-    print "ENV{TAR}=$ENV{TAR}\n";
-    print "Could not find tar command. Please make sure that (gnu) tar is present\n";
-    print "and that the TAR variable is set to its location.\n";
-    end_message();
-    exit 3;
+  error(
+      "ENV{TAR}=$ENV{TAR}\n" .
+      "Could not find tar command. Please make sure that (gnu) tar is present\n" .
+      "and that the TAR variable is set to its location.\n",3);
   }
   unless(defined($ENV{PATCH}) and $ENV{PATCH} =~ /\S/ and -x which($ENV{PATCH})) {
-    begin_message("ERROR");
-    print "Could not find patch command. Please make sure that (gnu) patch is present\n";
-    print "and that the PATCH variable is set to its location.\n";
-    end_message();
-    exit 4;
+    error(
+        "Could not find patch command. Please make sure that (gnu) patch is present\n" .
+        "and that the PATCH variable is set to its location.\n",4);
   }
 
   # Set locations
@@ -190,11 +188,11 @@ if($mpi_build and !$mpi_info_set) {
     sys("rm -rf ${BUILD_DIR} ${INSTALL_DIR}");
     mkdir(${BUILD_DIR});
     mkdir(${INSTALL_DIR});
-    fatal_message("${INSTALL_DIR} does not exist.",6) unless(-e ${INSTALL_DIR});
-    fatal_message("${INSTALL_DIR} is not a directory.",6) unless(-d ${INSTALL_DIR});
-    fatal_message("${INSTALL_DIR} is not readabile.",7) unless(-r ${INSTALL_DIR});
-    fatal_message("${INSTALL_DIR} is not writeable.",8) unless(-w ${INSTALL_DIR});
-    fatal_message("${INSTALL_DIR} is not executable.",8) unless(-x ${INSTALL_DIR});
+    error("${INSTALL_DIR} does not exist.",6) unless(-e ${INSTALL_DIR});
+    error("${INSTALL_DIR} is not a directory.",6) unless(-d ${INSTALL_DIR});
+    error("${INSTALL_DIR} is not readabile.",7) unless(-r ${INSTALL_DIR});
+    error("${INSTALL_DIR} is not writeable.",8) unless(-w ${INSTALL_DIR});
+    error("${INSTALL_DIR} is not executable.",8) unless(-x ${INSTALL_DIR});
     $mpi_dir = $ENV{MPI_DIR} = ${INSTALL_DIR};
 
     message("MPI: Unpacking archive...");
@@ -277,8 +275,7 @@ if($mpi_info_set) {
 
   message("MPI was manually configured.");
 } else {
-  message("MPI could not be configured.");
-  exit 5;
+  error("MPI could not be configured.",5);
 }
 
 ################################################################################
@@ -360,9 +357,12 @@ sub mpi_get_info {
   }
 }
 
-sub fatal_message {
+sub error {
   my ($msg,$errno) = @_;
-  message($msg);
+  $msg =~ s/\n$//;
+  begin_message("ERROR");
+  print $msg,"\n";
+  end_message("ERROR");
   exit $errno;
 }
 sub message {
