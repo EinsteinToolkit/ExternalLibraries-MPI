@@ -275,30 +275,33 @@ if($mpi_info_set) {
 
   message("MPI was manually configured.");
 } else {
-  error("MPI could not be configured.",5);
+  error("MPI could not be configured: neither automatic nor manual configuration succeeded",5);
 }
 
 ################################################################################
 # Configure Cactus
 ################################################################################
 
+# Strip standard paths
+$ENV{MPI_INC_DIRS} = strip_inc_dirs($ENV{MPI_INC_DIRS});
+$ENV{MPI_LIB_DIRS} = strip_lib_dirs($ENV{MPI_LIB_DIRS});
+
 # Pass options to Cactus
 
 begin_message("DEFINE");
 print "CCTK_MPI 1\n";
-print "HAVE_MPI 1\n";
+# print "HAVE_MPI 1\n";
 end_message();
 
 begin_message("MAKE_DEFINITION");
 print "CCTK_MPI     = 1\n";
-print "HAVE_MPI     = 1\n";
+# print "HAVE_MPI     = 1\n";
 print "MPI_DIR      = $ENV{MPI_DIR}\n";
 print "MPI_INC_DIRS = $ENV{MPI_INC_DIRS}\n";
 print "MPI_LIB_DIRS = $ENV{MPI_LIB_DIRS}\n";
 print "MPI_LIBS     = $ENV{MPI_LIBS}\n";
 end_message();
 
-# These must be magic
 print "INCLUDE_DIRECTORY \$(MPI_INC_DIRS)\n";
 print "LIBRARY_DIRECTORY \$(MPI_LIB_DIRS)\n";
 print "LIBRARY           \$(MPI_LIBS)\n";
@@ -399,4 +402,19 @@ sub end_message {
 sub is_set {
   my $var = shift;
   return (defined($ENV{$var}) and !($ENV{$var} =~ /^\s*$/));
+}
+
+sub strip_inc_dirs {
+  my $dirlist = shift;
+  my @dirs = split / /, $dirlist;
+  map { s{//}{/}g } @dirs;
+  @dirs = grep { !m{^/(usr/(local/)?)?include/?$} } @dirs;
+  return join ' ', @dirs;
+}
+sub strip_lib_dirs {
+  my $dirlist = shift;
+  my @dirs = split / /, $dirlist;
+  map { s{//}{/}g } @dirs;
+  @dirs = grep { !m{^/(usr/(local/)?)?lib(64?)/?$} } @dirs;
+  return join ' ', @dirs;
 }
