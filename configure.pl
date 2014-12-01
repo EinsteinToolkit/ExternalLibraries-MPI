@@ -77,7 +77,7 @@ if(!is_set("MPI_DIR")) {
     # wrapper under MPI_DIR
     $mpi_manual = 0;
     for my $name (@mpicxx_names) {
-      my $full_name = $ENV{MPI_DIR}."/bin/".$name;
+      my $full_name = "$ENV{MPI_DIR}/bin/$name";
       if(-x $full_name) {
         $mpi_cmd = $full_name;
         last;
@@ -136,20 +136,20 @@ if($mpi_build and !$mpi_info_set) {
   my $BUILD_DIR = undef;
   my $SRCDIR = $0;
   $SRCDIR =~ s{(.*)/.*}{$1};
-  ${BUILD_DIR}=$ENV{SCRATCH_BUILD}."/build/".${THORN};
+  ${BUILD_DIR}="$ENV{SCRATCH_BUILD}/build/${THORN}";
   if(defined($ENV{MPI_INSTALL_DIR}) and $ENV{MPI_INSTALL_DIR} =~ /\S/) {
     $INSTALL_DIR = "$ENV{MPI_INSTALL_DIR}/${THORN}";
   } else {
     $INSTALL_DIR = "$ENV{SCRATCH_BUILD}/external/${THORN}";
   }
   message("Installing MPI into ${INSTALL_DIR}");
-  my $DONE_FILE=${INSTALL_DIR}."/done_".${THORN};
+  my $DONE_FILE="$ENV{SCRATCH_BUILD}/done/${THORN}";
   $mpi_dir=${INSTALL_DIR};
 
   # Setting $mpi_cmd enables the generic
   # search method below to configure the
   # various MPI variables.
-  $mpi_cmd=$mpi_dir."/bin/mpicc";
+  $mpi_cmd="$mpi_dir/bin/mpicc";
 
   if(-r ${DONE_FILE}) {
     message("MPI has already been built; doing nothing");
@@ -320,7 +320,7 @@ sub popd {
 sub which {
   my $cmd = shift;
   for my $path (split(/:/,$ENV{PATH})) {
-    my $full_cmd = $path."/".$cmd;
+    my $full_cmd = "$path/$cmd";
     if(-x $full_cmd) {
       return $full_cmd;
     }
