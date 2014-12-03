@@ -1,0 +1,7 @@
+# Main make.code.deps file for thorn MPI
+
+export MPI_INSTALL_DIR
+
+$(CCTK_TARGET) $(OBJS) $(SRCS:%=%.d): $(SCRATCH_BUILD)/done/$(THORN)
+$(SCRATCH_BUILD)/done/$(THORN): $(SRCDIR)/build.pl
+	$(PERL) $(SRCDIR)/build.pl

@@ -2,7 +2,10 @@
 
 PROVIDES MPI
 {
-  SCRIPT configure.pl
+  SCRIPT src/detect.pl
   LANG perl
   OPTIONS MPI MPI_DIR MPI_INC_DIRS MPI_LIB_DIRS MPI_LIBS MPI_INSTALL_DIR
 }
+
+# Pass configuration options to build script
+REQUIRES MPI
