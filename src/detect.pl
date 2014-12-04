@@ -143,6 +143,11 @@ if ($mpi_build and !$mpi_info_set) {
     $ENV{MPI_INC_DIRS} = "$mpi_dir/include";
     $ENV{MPI_LIB_DIRS} = "$mpi_dir/lib";
     $ENV{MPI_LIBS} = "mpi";
+} else {
+    my $THORN = "MPI";
+    my $DONE_FILE = "$ENV{SCRATCH_BUILD}/done/${THORN}";
+    mkdir("$ENV{SCRATCH_BUILD}/done");
+    system("date > ${DONE_FILE}") == 0 or die;
 }
 
 ################################################################################
