@@ -124,7 +124,7 @@ if ($mpi_build and !$mpi_info_set) {
 
     # Set locations
     my $THORN = "MPI";
-    my $NAME = "openmpi-1.6.5";
+    my $NAME = "openmpi-1.8.4";
     my $INSTALL_DIR = undef;
     my $BUILD_DIR = undef;
     my $SRCDIR = $0;
@@ -142,7 +142,11 @@ if ($mpi_build and !$mpi_info_set) {
     $ENV{MPI_DIR} = $mpi_dir;
     $ENV{MPI_INC_DIRS} = "$mpi_dir/include";
     $ENV{MPI_LIB_DIRS} = "$mpi_dir/lib";
-    $ENV{MPI_LIBS} = "mpi";
+    my $mpi_fortranlibs = '';
+    if ($ENV{F90} ne 'none') {
+        $mpi_fortranlibs = "mpi_usempif08 mpi_usempi_ignore_tkr mpi_mpifh";
+    }
+    $ENV{MPI_LIBS} = "$mpi_fortranlibs mpi_cxx mpi open-rte open-pal";
 } else {
     my $THORN = "MPI";
     my $DONE_FILE = "$ENV{SCRATCH_BUILD}/done/${THORN}";

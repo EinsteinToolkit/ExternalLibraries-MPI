@@ -7,7 +7,7 @@ $/ = undef;
 
 # Set locations
 my $THORN = "MPI";
-my $NAME = "openmpi-1.6.5";
+my $NAME = "openmpi-1.8.4";
 my $INSTALL_DIR = undef;
 my $BUILD_DIR = undef;
 my $SRCDIR = $0;
@@ -58,11 +58,9 @@ error("${INSTALL_DIR} is not executable.",8) unless(-x ${INSTALL_DIR});
 print "MPI: Unpacking archive...\n";
 chdir(${BUILD_DIR});
 system("$ENV{TAR} xzf ${SRCDIR}/../dist/${NAME}.tar.gz") == 0 or die;
-system("$ENV{PATCH} -p0 < ${SRCDIR}/../dist/default_outfile-1.6.5.patch") == 0 or die;
-chdir(${NAME});
-system("$ENV{PATCH} -p0 < ${SRCDIR}/../dist/cuda_build_fix__svn29754") == 0 or die;
 
 print "MPI: Configuring...\n";
+chdir(${NAME});
 # Cannot have a memory manager with a static library on some systems
 # (e.g. Linux); see
 # <http://www.open-mpi.org/faq/?category=mpi-apps#static-mpi-apps>
