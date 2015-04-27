@@ -9,3 +9,7 @@ PROVIDES MPI
 
 # Pass configuration options to build script
 REQUIRES MPI
+
+OPTIONAL hwloc
+{
+}
