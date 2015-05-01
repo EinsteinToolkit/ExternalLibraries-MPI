@@ -216,6 +216,11 @@ if ($mpi_info_set) {
 $ENV{MPI_INC_DIRS} = strip_inc_dirs($ENV{MPI_INC_DIRS});
 $ENV{MPI_LIB_DIRS} = strip_lib_dirs($ENV{MPI_LIB_DIRS});
 
+# Pass configuration options to build script
+print "BEGIN MAKE_DEFINITION\n";
+print "HWLOC_DIR = $ENV{HWLOC_DIR}\n";
+print "END MAKE_DEFINITION\n";
+
 # Pass options to Cactus
 
 print "BEGIN DEFINE\n";

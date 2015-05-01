@@ -61,14 +61,14 @@ system("$ENV{TAR} xzf ${SRCDIR}/../dist/${NAME}.tar.gz") == 0 or die;
 
 print "MPI: Configuring...\n";
 chdir(${NAME});
+my $hwloc_opts = '';
+if ($ENV{HWLOC_DIR} ne '') {
+    $hwloc_opts = "--with-hwloc='$ENV{HWLOC_DIR}'";
+}
 # Cannot have a memory manager with a static library on some systems
 # (e.g. Linux); see
 # <http://www.open-mpi.org/faq/?category=mpi-apps#static-mpi-apps>
-my $hwloc_opts = '';
-if ($ENV{HWLOC_DIR} ne '') {
-    $hwloc_opts = "--with-hwloc=$ENV{HWLOC_DIR}";
-}
-system("./configure --prefix=$mpi_dir $hwloc_opts --without-memory-manager --without-libnuma --enable-shared=no --enable-static=yes") == 0 or die;
+system("./configure --prefix='$mpi_dir' $hwloc_opts --without-memory-manager --without-libnuma --enable-shared=no --enable-static=yes") == 0 or die;
 
 print "MPI: Building...\n";
 system("$ENV{MAKE}") == 0 or die;
