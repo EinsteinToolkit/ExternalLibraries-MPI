@@ -33,7 +33,11 @@ my $mpi_search = 1;
 my $mpi_build = 0;
 my $mpi_manual = 0;
 
-my @mpicxx_names = ("mpic++", "mpiCC", "mpicxx", "mpicxx-openmpi-mp", "mpicc");
+# Note:
+# - look for "mpiCC" last, since this is equivalent to mpicc on
+#   case-insensitive file systems
+# - don't look for "mpicc", since linking with a C compiler won't work
+my @mpicxx_names = ("mpic++", "mpicxx", "mpicxx-openmpi-mp", "mpiCC");
 
 if (!is_set("MPI_DIR")) {
     message("MPI selected, but MPI_DIR is not set. Computing settings...");
