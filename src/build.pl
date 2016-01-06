@@ -7,7 +7,7 @@ $/ = undef;
 
 # Set locations
 my $THORN = "MPI";
-my $NAME = "openmpi-1.8.4";
+my $NAME = "openmpi-1.10.1";
 my $INSTALL_DIR = undef;
 my $BUILD_DIR = undef;
 my $SRCDIR = $0;
@@ -68,7 +68,7 @@ if ($ENV{HWLOC_DIR} ne '') {
 # Cannot have a memory manager with a static library on some systems
 # (e.g. Linux); see
 # <http://www.open-mpi.org/faq/?category=mpi-apps#static-mpi-apps>
-system("./configure --prefix='$mpi_dir' $hwloc_opts --without-memory-manager --without-libnuma --enable-shared=no --enable-static=yes") == 0 or die;
+system("./configure --prefix='$mpi_dir' $hwloc_opts --without-memory-manager --enable-shared=no --enable-static=yes") == 0 or die;
 
 print "MPI: Building...\n";
 system("$ENV{MAKE}") == 0 or die;
