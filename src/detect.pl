@@ -128,7 +128,7 @@ if ($mpi_build and !$mpi_info_set) {
 
     # Set locations
     my $THORN = "MPI";
-    my $NAME = "openmpi-1.8.4";
+    my $NAME = "openmpi-1.10.1";
     my $INSTALL_DIR = undef;
     my $BUILD_DIR = undef;
     my $SRCDIR = $0;
@@ -141,7 +141,7 @@ if ($mpi_build and !$mpi_info_set) {
     }
     message("Installing MPI into ${INSTALL_DIR}");
     $mpi_dir = ${INSTALL_DIR};
-    
+
     $mpi_manual = 1;
     $ENV{MPI_DIR} = $mpi_dir;
     $ENV{MPI_INC_DIRS} = "$mpi_dir/include";
