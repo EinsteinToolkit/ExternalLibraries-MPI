@@ -154,8 +154,10 @@ if ($mpi_build and !$mpi_info_set) {
 } else {
     my $THORN = "MPI";
     my $DONE_FILE = "$ENV{SCRATCH_BUILD}/done/${THORN}";
-    mkdir("$ENV{SCRATCH_BUILD}/done");
-    system("date > ${DONE_FILE}") == 0 or die;
+    if (! -e $DONE_FILE) {
+        mkdir("$ENV{SCRATCH_BUILD}/done");
+        system("date > ${DONE_FILE}") == 0 or die;
+    }
 }
 
 ################################################################################
