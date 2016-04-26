@@ -242,6 +242,7 @@ print "MPI_LIBS     = $ENV{MPI_LIBS}\n";
 print "END MAKE_DEFINITION\n";
 
 print "INCLUDE_DIRECTORY \$(MPI_INC_DIRS)\n";
+print "INCLUDE_DIRECTORY_FORTRAN \$(MPI_LIB_DIRS)\n";
 print "LIBRARY_DIRECTORY \$(MPI_LIB_DIRS)\n";
 print "LIBRARY           \$(MPI_LIBS)\n";
 
