@@ -105,6 +105,8 @@ if ($mpi_search and !defined($mpi_cmd)) {
     }
 }
 
+my $THORN = "MPI";
+
 ################################################################################
 # Build
 ################################################################################
@@ -127,7 +129,6 @@ if ($mpi_build and !$mpi_info_set) {
     }
 
     # Set locations
-    my $THORN = "MPI";
     my $NAME = "openmpi-1.10.1";
     my $INSTALL_DIR = undef;
     my $BUILD_DIR = undef;
@@ -143,6 +144,7 @@ if ($mpi_build and !$mpi_info_set) {
     $mpi_dir = ${INSTALL_DIR};
 
     $mpi_manual = 1;
+    $ENV{MPI_BUILD} = '1';
     $ENV{MPI_DIR} = $mpi_dir;
     $ENV{MPI_INC_DIRS} = "$mpi_dir/include";
     $ENV{MPI_LIB_DIRS} = "$mpi_dir/lib";
@@ -152,7 +154,7 @@ if ($mpi_build and !$mpi_info_set) {
     }
     $ENV{MPI_LIBS} = "$mpi_fortranlibs mpi_cxx mpi open-rte open-pal";
 } else {
-    my $THORN = "MPI";
+    $ENV{MPI_BUILD} = '';
     my $DONE_FILE = "$ENV{SCRATCH_BUILD}/done/${THORN}";
     if (! -e $DONE_FILE) {
         mkdir("$ENV{SCRATCH_BUILD}/done");
@@ -224,7 +226,9 @@ $ENV{MPI_LIB_DIRS} = strip_lib_dirs($ENV{MPI_LIB_DIRS});
 
 # Pass configuration options to build script
 print "BEGIN MAKE_DEFINITION\n";
-print "HWLOC_DIR = $ENV{HWLOC_DIR}\n";
+print "MPI_BUILD       = $ENV{MPI_BUILD}\n";
+print "MPI_INSTALL_DIR = $ENV{MPI_INSTALL_DIR}\n";
+print "HWLOC_DIR       = $ENV{HWLOC_DIR}\n";
 print "END MAKE_DEFINITION\n";
 
 # Pass options to Cactus
