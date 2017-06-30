@@ -152,7 +152,11 @@ if ($mpi_build and !$mpi_info_set) {
     if ($ENV{F90} ne 'none') {
         $mpi_fortranlibs = "mpi_usempif08 mpi_usempi_ignore_tkr mpi_mpifh";
     }
-    $ENV{MPI_LIBS} = "$mpi_fortranlibs mpi_cxx mpi open-rte open-pal";
+    my $mpi_linux_libs = '';
+    if ($^O eq 'linux') {
+        $mpi_linux_libs = "rt util";
+    }
+    $ENV{MPI_LIBS} = "$mpi_fortranlibs mpi_cxx mpi open-rte open-pal $mpi_linux_libs";
 } else {
     $ENV{MPI_BUILD} = '';
     my $DONE_FILE = "$ENV{SCRATCH_BUILD}/done/${THORN}";
