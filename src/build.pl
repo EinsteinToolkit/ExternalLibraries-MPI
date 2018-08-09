@@ -62,7 +62,7 @@ system("$ENV{TAR} xzf ${SRCDIR}/../dist/${NAME}.tar.gz") == 0 or die;
 print "MPI: Configuring...\n";
 chdir(${NAME});
 my $hwloc_opts = '';
-if ($ENV{HWLOC_DIR} ne '') {
+if ($ENV{HWLOC_DIR} ne '' and $ENV{HWLOC_DIR} ne 'NO_BUILD') {
     $hwloc_opts = "--with-hwloc='$ENV{HWLOC_DIR}'";
 }
 # Cannot have a memory manager with a static library on some systems
