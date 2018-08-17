@@ -129,7 +129,6 @@ if ($mpi_build and !$mpi_info_set) {
     }
 
     # Set locations
-    my $NAME = "openmpi-1.10.1";
     my $INSTALL_DIR = undef;
     my $BUILD_DIR = undef;
     my $SRCDIR = $0;

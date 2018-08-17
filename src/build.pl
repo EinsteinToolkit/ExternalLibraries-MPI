@@ -7,7 +7,7 @@ $/ = undef;
 
 # Set locations
 my $THORN = "MPI";
-my $NAME = "openmpi-1.10.1";
+my $NAME = "openmpi-1.10.7";
 my $INSTALL_DIR = undef;
 my $BUILD_DIR = undef;
 my $SRCDIR = $0;
