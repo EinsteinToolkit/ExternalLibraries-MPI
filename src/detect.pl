@@ -15,16 +15,13 @@ $verbose = 1 if $ENV{VERBOSE} =~ /^yes$/i;
 
 if ($verbose) {
     # we implement VERBOSE by restarting in the debugger and having it print each line
-    unless (defined &DB::DB) {
-        # sadly Devel::Trace is not a standard package so we test for it here
-        eval {
-            require Devel::Trace;
-        };
-        unless ($@) {
-            exit system($^X, "-d:Trace", $0,  @ARGV);
-        } else {
-            message("Could not 'import Devel::Trace' required for VERBOSE=yes. Consider installing it from CPAN https://metacpan.org/pod/Devel::Trace or using your package manager (possibly in the libdevel-trace-perl package).");
-        }
+    if (not defined($ENV{'PERL5DB'})) {
+        $ENV{'PERL5DB'} = 'sub DB::DB {
+            my ($p, $f, $l) = caller;
+            my $code = \@{"::_<$f"};
+            print STDERR ">> $f:$l: $code->[$l]";
+          }';
+        exit system($^X, "-d", $0, @ARGV);
     }
 }
 
