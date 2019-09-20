@@ -2,4 +2,5 @@
 
 # Define the relevant OpenMPI utilities
 STD_MPI_UTILS = mpirun ompi-clean ompi-iof ompi-probe ompi-profiler ompi-ps ompi-server ompi-top ompi_info
-ALL_UTILS += $(shell cd $(MPI_DIR)/bin 2>/dev/null && ls $(STD_MPI_UTILS:%=%*) 2>/dev/null)
+MPI_UTILS = $(shell cd $(MPI_DIR)/bin 2>/dev/null && ls $(STD_MPI_UTILS:%=%*) 2>/dev/null)
+ALL_UTILS += $(MPI_UTILS)
