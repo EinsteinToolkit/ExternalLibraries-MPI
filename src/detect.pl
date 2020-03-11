@@ -15,13 +15,14 @@ $verbose = 1 if $ENV{VERBOSE} =~ /^yes$/i;
 
 if ($verbose) {
     # we implement VERBOSE by restarting in the debugger and having it print each line
-    if (not defined($ENV{'PERL5DB'})) {
-        $ENV{'PERL5DB'} = 'sub DB::DB {
-            no strict;
-            my ($p, $f, $l) = caller;
-            my $code = \@{"::_<$f"};
-            print STDERR ">> $f:$l: $code->[$l]";
-          }';
+    # this subroutine is defined all the time, just only used when in debug mode
+    sub DB::DB {
+        no strict;
+        my ($p, $f, $l) = caller;
+        my $code = \@{"::_<$f"};
+        print STDERR ">> $f:$l: $code->[$l]";
+    }
+    if (not $^P) {
         exit system($^X, "-d", $0, @ARGV);
     }
 }
