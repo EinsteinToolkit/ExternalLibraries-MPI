@@ -84,7 +84,7 @@ if ($ENV{HWLOC_DIR} ne '' and $ENV{HWLOC_DIR} ne 'NO_BUILD') {
 # Cannot have a memory manager with a static library on some systems
 # (e.g. Linux); see
 # <http://www.open-mpi.org/faq/?category=mpi-apps#static-mpi-apps>
-system("./configure --prefix='$mpi_dir' $hwloc_opts --enable-mpi-cxx --with-zlib=no --without-memory-manager --enable-shared=no --enable-static=yes") == 0 or die;
+system("./configure --prefix='$mpi_dir' $hwloc_opts --enable-mpi-cxx --with-zlib=no --enable-mpi1-compatibility --without-memory-manager --enable-shared=no --enable-static=yes") == 0 or die;
 
 print "MPI: Building...\n";
 system("$ENV{MAKE}") == 0 or die;
