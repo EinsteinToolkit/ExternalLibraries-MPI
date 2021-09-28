@@ -167,7 +167,7 @@ if ($mpi_build and !$mpi_info_set) {
     }
     my $mpi_linux_libs = '';
     if ($^O eq 'linux') {
-        $mpi_linux_libs = "rt util";
+        $mpi_linux_libs = "pthread rt util";
     }
     $ENV{MPI_LIBS} = "$mpi_fortranlibs mpi_cxx mpi open-rte open-pal $mpi_linux_libs";
 } else {

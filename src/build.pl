@@ -23,7 +23,7 @@ if ($verbose) {
 
 # Set locations
 my $THORN = "MPI";
-my $NAME = "openmpi-4.0.2";
+my $NAME = "openmpi-4.0.6";
 my $INSTALL_DIR = undef;
 my $BUILD_DIR = undef;
 my $SRCDIR = $0;
