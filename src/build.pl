@@ -80,6 +80,42 @@ chdir(${NAME});
 my $hwloc_opts = '';
 if ($ENV{HWLOC_DIR} ne '' and $ENV{HWLOC_DIR} ne 'NO_BUILD') {
     $hwloc_opts = "--with-hwloc='$ENV{HWLOC_DIR}'";
+    # MPI must link to all the extra HWLOC libs but does not do so by default
+    my $hwloc_libs = "";
+    for my $lib (split(/\s+/,$ENV{HWLOC_LIBS})) {
+      if($lib =~ m/^-/) {
+        $hwloc_libs .= " $lib";
+      } else {
+        $hwloc_libs .= " -l$lib";
+      }
+    }
+    if ($hwloc_libs ne '') {
+      $ENV{LIBS} .= $hwloc_libs;
+    }
+    # OpenMPI assumes a regular usr/lib and usr/include set of paths so we need
+    # to communicate to it any differences
+    my $hwloc_lib_dirs = "";
+    for my $dir (split(/\s+/,$ENV{HWLOC_LIB_DIRS})) {
+      if($dir =~ m/^-/) {
+        $hwloc_lib_dirs .= " $dir";
+      } else {
+        $hwloc_lib_dirs .= " -L$dir";
+      }
+    }
+    if ($hwloc_lib_dirs ne '') {
+      $ENV{LDFLAGS} .= $hwloc_lib_dirs;
+    }
+    my $hwloc_inc_dirs = "";
+    for my $dir (split(/\s+/,$ENV{HWLOC_INC_DIRS})) {
+      if($dir =~ m/^-/) {
+        $hwloc_inc_dirs .= " $dir";
+      } else {
+        $hwloc_inc_dirs .= " -I$dir";
+      }
+    }
+    if ($hwloc_inc_dirs ne '') {
+      $ENV{CFLAGS} .= $hwloc_inc_dirs;
+    }
 }
 # Cannot have a memory manager with a static library on some systems
 # (e.g. Linux); see
