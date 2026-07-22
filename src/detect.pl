@@ -234,6 +234,35 @@ if ($mpi_info_set) {
 }
 
 ################################################################################
+# Link against hwloc (only when MPI is built from source)
+################################################################################
+
+# When MPI is built from source (build.pl) it is configured --with-hwloc
+# against the hwloc thorn and built as static libraries. OpenMPI's static
+# archives (e.g. libopen-pal.a) then contain undefined references into
+# libhwloc (hwloc_topology_get_support, ...) with no recorded dependency,
+# so every consumer must name the hwloc libraries on its own link line.
+# hwloc is a separate thorn and is not part of MPI_LIBS, so append it here
+# rather than in each client. This makes all MPI clients self-sufficient --
+# in particular any that run a standalone MPI link check (e.g. PETSc's
+# configure), not just the final Cactus link where the hwloc thorn's
+# LIBRARY line is already present.
+#
+# Only do this for the from-source build: a system/wrapper MPI resolves
+# hwloc through its own shared libraries (or compiler-wrapper flags), and
+# injecting the Cactus hwloc thorn's libraries there could pull in a
+# mismatched hwloc.
+if ($ENV{MPI_BUILD} eq '1' and
+    is_set("HWLOC_DIR") and $ENV{HWLOC_DIR} ne 'NO_BUILD') {
+    if (is_set("HWLOC_LIB_DIRS")) {
+        $ENV{MPI_LIB_DIRS} = "$ENV{MPI_LIB_DIRS} $ENV{HWLOC_LIB_DIRS}";
+    }
+    if (is_set("HWLOC_LIBS")) {
+        $ENV{MPI_LIBS} = "$ENV{MPI_LIBS} $ENV{HWLOC_LIBS}";
+    }
+}
+
+################################################################################
 # Configure Cactus
 ################################################################################
 
